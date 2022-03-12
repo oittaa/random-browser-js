@@ -1,4 +1,4 @@
-import { choice, randomBits, randomBytes, randomInt, tokenHex } from './browser.js'
+import { choice, randomBits, randomBytes, randomInt, tokenHex } from './random.js'
 
 import { randomFillSync } from 'crypto'
 
