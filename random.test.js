@@ -1,9 +1,9 @@
 import { choice, randomBits, randomBytes, randomInt, tokenHex } from './random.js'
 
-import { randomFillSync } from 'crypto'
+import { webcrypto } from 'crypto'
 
 global.crypto = {
-  getRandomValues: function (buffer) { return randomFillSync(buffer) }
+  getRandomValues: function (buffer) { return webcrypto.getRandomValues(buffer) }
 }
 
 const arr49 = Array.from(Array(49).keys())

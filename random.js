@@ -56,9 +56,7 @@ function randomBits (k) {
  * is a number indicating the number of bytes to generate.
  */
 function randomBytes (size) {
-  const bytes = new Uint8Array(size)
-  window.crypto.getRandomValues(bytes)
-  return bytes
+  return window.crypto.getRandomValues(new Uint8Array(size))
 }
 
 /**
