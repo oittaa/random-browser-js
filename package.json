@@ -4,18 +4,22 @@
   "description": "The random module is used for generating cryptographically strong random numbers suitable for managing data such as passwords, account authentication, security tokens, and related secrets.",
   "browser": "browser.js",
   "type": "module",
-
   "scripts": {
+    "lint": "standard",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "author": "oittaa",
   "license": "MIT",
   "devDependencies": {
-    "jest": "^27.5.1"
+    "jest": "^27.5.1",
+    "standard": "^16.0.4"
   },
   "jest": {
     "collectCoverage": true,
     "testEnvironment": "jsdom",
     "transform": {}
+  },
+  "standard": {
+    "env": [ "jest" ]
   }
 }
