@@ -1,6 +1,8 @@
 # random-browser-js
+[![CI](https://github.com/oittaa/random-browser-js/actions/workflows/main.yml/badge.svg)](https://github.com/oittaa/random-browser-js/actions/workflows/main.yml)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/oittaa/random-browser-js/main.svg)](https://results.pre-commit.ci/latest/github/oittaa/random-browser-js/main)
 
-```
+```html
 <script type="module">
 import { choice, randomBits, randomInt, tokenHex } from './browser.js';
 
