@@ -42,13 +42,23 @@ function randomBits (k) {
   }
   // bits / 8 and rounded up
   const numBytes = intDiv(k + 7, 8)
-  const byteArray = window.crypto.getRandomValues(new Uint8Array(numBytes))
+  const byteArray = randomBytes(numBytes)
   let x = 0
   for (const element of byteArray) {
     x = (x * 256) + element
   }
   // trim excess bits
   return intDiv(x, Math.pow(2, numBytes * 8 - k))
+}
+
+/**
+ * Generates cryptographically strong pseudorandom data. The size argument
+ * is a number indicating the number of bytes to generate.
+ */
+function randomBytes (size) {
+  const bytes = new Uint8Array(size)
+  window.crypto.getRandomValues(bytes)
+  return bytes
 }
 
 /**
@@ -92,10 +102,10 @@ function tokenHex (numBytes) {
   if (typeof numBytes === 'undefined') {
     numBytes = DEFAULT_ENTROPY
   }
-  const byteArray = window.crypto.getRandomValues(new Uint8Array(numBytes))
+  const byteArray = randomBytes(numBytes)
   return Array.from(byteArray, function (byte) {
     return ('0' + byte.toString(16)).slice(-2)
   }).join('')
 }
 
-export { choice, randomBits, randomInt, tokenHex }
+export { choice, randomBits, randomBytes, randomInt, tokenHex }
