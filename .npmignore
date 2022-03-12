@@ -1,0 +1,4 @@
+.editorconfig
+.github
+.pre-commit-config.yaml
+coverage
