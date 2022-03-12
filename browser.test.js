@@ -1,4 +1,4 @@
-import { choice, randomBits, randomInt, tokenHex } from './browser.js'
+import { choice, randomBits, randomBytes, randomInt, tokenHex } from './browser.js'
 
 import { randomFillSync } from 'crypto'
 
@@ -27,6 +27,21 @@ test.each(arr49)('randomBits(0) -> randomBits(48)', (i) => {
   expect(value).toBeLessThan(Math.pow(2, i))
 })
 
+test('randomBytes(0)', () => {
+  const value = randomBytes(0)
+  expect(value.length).toBe(0)
+})
+
+test('randomBytes(8)', () => {
+  const value = randomBytes(8)
+  expect(value.length).toBe(8)
+})
+
+test('randomBytes(65536)', () => {
+  const value = randomBytes(65536)
+  expect(value.length).toBe(65536)
+})
+
 test('randomInt(5, 10)', () => {
   const value = randomInt(5, 10)
   expect(value).toBeGreaterThanOrEqual(5)
@@ -51,7 +66,7 @@ test.each(arr100)('randomInt(1) -> randomInt(100)', (i) => {
   expect(value).toBeLessThan(i + 1)
 })
 
-test.each(arr100)('tokenHex()', (i) => {
+test.each(arr100)('tokenHex() collision', (i) => {
   const value = tokenHex()
   expect(value).not.toBe(temp)
   temp = value
@@ -72,6 +87,10 @@ test('randomBits(-1)', () => {
 
 test('randomBits(49)', () => {
   expect(() => randomBits(49)).toThrow(RangeError)
+})
+
+test('randomBytes(-1)', () => {
+  expect(() => randomBytes(-1)).toThrow(RangeError)
 })
 
 test('randomInt(-1, 0xFFFF_FFFF_FFFF)', () => {
