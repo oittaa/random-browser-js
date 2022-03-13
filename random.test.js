@@ -1,9 +1,14 @@
-import { choice, randomBits, randomBytes, randomInt, tokenHex } from './random.js'
-
 import { webcrypto } from 'crypto'
 
 global.crypto = {
   getRandomValues: function (buffer) { return webcrypto.getRandomValues(buffer) }
+}
+
+let r
+if (process.env.NODE_TEST_MINIFIED) {
+  r = await import('./random.min.js')
+} else {
+  r = await import('./random.js')
 }
 
 const arr49 = Array.from(Array(49).keys())
@@ -12,92 +17,92 @@ const arrPets = ['Cat', 'Dog', 'Fish']
 let temp = ''
 
 test('choice(arr100)', () => {
-  const value = choice(arr100)
+  const value = r.choice(arr100)
   expect(arr100).toContain(value)
 })
 
 test('choice(arrPets)', () => {
-  const value = choice(arrPets)
+  const value = r.choice(arrPets)
   expect(arrPets).toContain(value)
 })
 
 test.each(arr49)('randomBits(0) -> randomBits(48)', (i) => {
-  const value = randomBits(i)
+  const value = r.randomBits(i)
   expect(value).toBeGreaterThanOrEqual(0)
   expect(value).toBeLessThan(Math.pow(2, i))
 })
 
 test('randomBytes(0)', () => {
-  const value = randomBytes(0)
+  const value = r.randomBytes(0)
   expect(value.length).toBe(0)
 })
 
 test('randomBytes(8)', () => {
-  const value = randomBytes(8)
+  const value = r.randomBytes(8)
   expect(value.length).toBe(8)
 })
 
 test('randomBytes(65536)', () => {
-  const value = randomBytes(65536)
+  const value = r.randomBytes(65536)
   expect(value.length).toBe(65536)
 })
 
 test('randomInt(5, 10)', () => {
-  const value = randomInt(5, 10)
+  const value = r.randomInt(5, 10)
   expect(value).toBeGreaterThanOrEqual(5)
   expect(value).toBeLessThan(10)
 })
 
 test('randomInt(-30, -20)', () => {
-  const value = randomInt(-30, -20)
+  const value = r.randomInt(-30, -20)
   expect(value).toBeGreaterThanOrEqual(-30)
   expect(value).toBeLessThan(-20)
 })
 
 test('randomInt(0xFFFF_FFFF_FFFF)', () => {
-  const value = randomInt(0xFFFF_FFFF_FFFF)
+  const value = r.randomInt(0xFFFF_FFFF_FFFF)
   expect(value).toBeGreaterThanOrEqual(0)
   expect(value).toBeLessThan(0xFFFF_FFFF_FFFF)
 })
 
 test.each(arr100)('randomInt(1) -> randomInt(100)', (i) => {
-  const value = randomInt(i + 1)
+  const value = r.randomInt(i + 1)
   expect(value).toBeGreaterThanOrEqual(0)
   expect(value).toBeLessThan(i + 1)
 })
 
 test.each(arr100)('tokenHex() collision', (i) => {
-  const value = tokenHex()
+  const value = r.tokenHex()
   expect(value).not.toBe(temp)
   temp = value
 })
 
 test.each(arr100)('tokenHex() length', (i) => {
-  const value = tokenHex(i)
+  const value = r.tokenHex(i)
   expect(value.length).toBe(i * 2)
 })
 
 test('choice([])', () => {
-  expect(() => choice([])).toThrow(RangeError)
+  expect(() => r.choice([])).toThrow(RangeError)
 })
 
 test('randomBits(-1)', () => {
-  expect(() => randomBits(-1)).toThrow(RangeError)
+  expect(() => r.randomBits(-1)).toThrow(RangeError)
 })
 
 test('randomBits(49)', () => {
-  expect(() => randomBits(49)).toThrow(RangeError)
+  expect(() => r.randomBits(49)).toThrow(RangeError)
 })
 
 test('randomBytes(-1)', () => {
-  expect(() => randomBytes(-1)).toThrow(RangeError)
+  expect(() => r.randomBytes(-1)).toThrow(RangeError)
 })
 
 test('randomInt(-1, 0xFFFF_FFFF_FFFF)', () => {
-  expect(() => randomInt(-1, 0xFFFF_FFFF_FFFF)).toThrow(RangeError)
+  expect(() => r.randomInt(-1, 0xFFFF_FFFF_FFFF)).toThrow(RangeError)
 })
 
 test('randomInt() without safe integer', () => {
-  expect(() => randomInt(Number.MAX_SAFE_INTEGER + 1)).toThrow(Error)
-  expect(() => randomInt(Number.MIN_SAFE_INTEGER - 1, Number.MIN_SAFE_INTEGER)).toThrow(Error)
+  expect(() => r.randomInt(Number.MAX_SAFE_INTEGER + 1)).toThrow(Error)
+  expect(() => r.randomInt(Number.MIN_SAFE_INTEGER - 1, Number.MIN_SAFE_INTEGER)).toThrow(Error)
 })
