@@ -13,7 +13,7 @@ Inspired by [crypto][nodejs-crypto] from Node.js and [secrets][python-secrets] f
 
 ```html
 <script type="module">
-import { choice, randomBits, randomBytes, randomInt, tokenHex } from 'https://cdn.jsdelivr.net/npm/random-browser@1.0.1/random.min.js';
+import { choice, randomBits, randomBytes, randomInt, tokenHex } from 'https://cdn.jsdelivr.net/npm/random-browser';
 
 console.log('Pick a random fruit from array: ' + choice(['Apple', 'Banana', 'Orange']));
 console.log('Pick a random character from string: ' + choice('ABCDEF'));
@@ -29,9 +29,9 @@ console.log('32 character hexadecimal string from 16 random bytes: ' + tokenHex(
 
 Use a CDN like JSDelivr:
 ```
-https://cdn.jsdelivr.net/npm/random-browser@1.0.1/random.min.js
+https://cdn.jsdelivr.net/npm/random-browser@1.0.2
 or
-https://cdn.jsdelivr.net/npm/random-browser@latest/random.min.js
+https://cdn.jsdelivr.net/npm/random-browser
 ```
 Or you can download [random.js][random-js-file] from GitHub. Alternatively, you can install it via npm:
 ```bash
