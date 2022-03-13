@@ -23,7 +23,10 @@
     "transform": {}
   },
   "standard": {
-    "env": [ "jest" ]
+    "env": [ "jest" ],
+    "ignore": [
+      "random.test.js"
+    ]
   },
   "homepage": "https://github.com/oittaa/random-browser-js",
   "repository": {
