@@ -1,5 +1,5 @@
 repos:
   - repo: https://github.com/standard/standard
-    rev: master
+    rev: v17.0.0-2
     hooks:
     - id: standard
