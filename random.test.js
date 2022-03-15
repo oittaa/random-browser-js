@@ -106,3 +106,21 @@ test('randomInt() without safe integer', () => {
   expect(() => r.randomInt(Number.MAX_SAFE_INTEGER + 1)).toThrow(Error)
   expect(() => r.randomInt(Number.MIN_SAFE_INTEGER - 1, Number.MIN_SAFE_INTEGER)).toThrow(Error)
 })
+
+// Doesn't guarantee correctness, but at least the numbers are appearing in the full range.
+test.each([14, 15, 16, 17, 254, 255, 256, 257])('randomInt() distribution ', (m) => {
+  const dict = {}
+  for (let i = 0; i < 100_000; i++) {
+    const n = r.randomInt(m)
+    if (n in dict) {
+      dict[n]++
+    } else {
+      dict[n] = 1
+    }
+  }
+  expect(Object.keys(dict).length).toBe(m)
+  const values = Object.values(dict)
+  const max = Math.max(...values)
+  const min = Math.min(...values)
+  expect(min / max).toBeGreaterThan(0.5)
+})
