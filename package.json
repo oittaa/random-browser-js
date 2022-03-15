@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "npm run minify",
     "lint": "standard",
-    "minify": "terser random.js --compress passes=2 --ecma 2015 --mangle --toplevel --source-map --output random.min.js",
+    "minify": "terser random.js --compress passes=2,unsafe_comps=true --ecma 2015 --mangle --module --source-map --output random.min.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "author": "oittaa",
