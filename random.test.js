@@ -124,3 +124,21 @@ test.each([14, 15, 16, 17, 254, 255, 256, 257])('randomInt() distribution ', (m)
   const min = Math.min(...values)
   expect(min / max).toBeGreaterThan(0.5)
 })
+
+// Doesn't guarantee correctness, but at least the numbers are appearing in the full range.
+test.each([5, 6, 7, 8, 9])('randomBits() distribution ', (m) => {
+  const dict = {}
+  for (let i = 0; i < 100_000; i++) {
+    const n = r.randomBits(m)
+    if (n in dict) {
+      dict[n]++
+    } else {
+      dict[n] = 1
+    }
+  }
+  expect(Object.keys(dict).length).toBe(Math.pow(2, m))
+  const values = Object.values(dict)
+  const max = Math.max(...values)
+  const min = Math.min(...values)
+  expect(min / max).toBeGreaterThan(0.5)
+})
