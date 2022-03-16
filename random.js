@@ -32,7 +32,7 @@ function randomBits (k) {
     x = (x * 256) + element
   }
   // trim excess bits
-  return intDiv(x, Math.pow(2, numBytes * 8 - k))
+  return intDiv(x, 2 ** (numBytes * 8 - k))
 }
 
 /**
@@ -82,11 +82,6 @@ function randomInt (min, max) {
  * bytes, each byte converted to two hex digits. If numBytes is not supplied,
  * a reasonable default is used.
  */
-function tokenHex (numBytes = DEFAULT_ENTROPY) {
-  const byteArray = randomBytes(numBytes)
-  return Array.from(byteArray, function (byte) {
-    return ('0' + byte.toString(16)).slice(-2)
-  }).join('')
-}
+const tokenHex = (numBytes = DEFAULT_ENTROPY) => Array.from(randomBytes(numBytes), byte => ('0' + byte.toString(16)).slice(-2)).join('')
 
 export { choice, randomBits, randomBytes, randomInt, tokenHex }
