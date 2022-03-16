@@ -108,7 +108,7 @@ test('randomInt() without safe integer', () => {
 })
 
 // Doesn't guarantee correctness, but at least the numbers are appearing in the full range.
-test.each([14, 15, 16, 17, 254, 255, 256, 257])('randomInt() distribution ', (m) => {
+test.each([2, 14, 15, 16, 17, 254, 255, 256, 257])('randomInt() distribution ', (m) => {
   const dict = {}
   for (let i = 0; i < 100_000; i++) {
     const n = r.randomInt(m)
@@ -126,7 +126,7 @@ test.each([14, 15, 16, 17, 254, 255, 256, 257])('randomInt() distribution ', (m)
 })
 
 // Doesn't guarantee correctness, but at least the numbers are appearing in the full range.
-test.each([5, 6, 7, 8, 9])('randomBits() distribution ', (m) => {
+test.each([1, 2, 3, 4, 5, 6, 7, 8, 9])('randomBits() distribution ', (m) => {
   const dict = {}
   for (let i = 0; i < 100_000; i++) {
     const n = r.randomBits(m)
