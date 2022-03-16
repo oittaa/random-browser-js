@@ -66,8 +66,8 @@ function randomInt (min, max) {
     return min
   }
   // number of bits necessary to represent an unsigned integer (range) in binary
-  let k = 0
-  for (let i = 1; i <= range; i *= 2) {
+  let k = 1
+  for (let i = 2; i < range; i *= 2) {
     k++
   }
   let x
