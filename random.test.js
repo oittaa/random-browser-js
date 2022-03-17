@@ -13,8 +13,8 @@ if (process.env.NODE_TEST_MINIFIED) {
 
 const arr100 = Array.from(Array(100).keys())
 const arrPets = ['Cat', 'Dog', 'Fish']
-const maxInt = Number.MAX_SAFE_INTEGER;
-const minInt = Number.MIN_SAFE_INTEGER;
+const maxInt = Number.MAX_SAFE_INTEGER
+const minInt = Number.MIN_SAFE_INTEGER
 
 test('choice(arr100)', () => {
   const value = r.choice(arr100)
@@ -27,7 +27,7 @@ test('choice(arrPets)', () => {
 })
 
 test('randomBits(2)', () => {
-  const randomInts = [];
+  const randomInts = []
   for (let i = 0; i < 100; i++) {
     const value = r.randomBits(2)
     expect(value).toBeGreaterThanOrEqual(0)
@@ -64,7 +64,7 @@ test('randomBytes(65536)', () => {
 })
 
 test('randomInt(3)', () => {
-  const randomInts = [];
+  const randomInts = []
   for (let i = 0; i < 100; i++) {
     const value = r.randomInt(3)
     expect(value).toBeGreaterThanOrEqual(0)
@@ -77,7 +77,7 @@ test('randomInt(3)', () => {
 })
 
 test('randomInt(1, 3)', () => {
-  const randomInts = [];
+  const randomInts = []
   for (let i = 0; i < 100; i++) {
     const value = r.randomInt(1, 3)
     expect(value).toBeGreaterThanOrEqual(1)
@@ -89,7 +89,7 @@ test('randomInt(1, 3)', () => {
 })
 
 test('randomInt(-10, -8)', () => {
-  const randomInts = [];
+  const randomInts = []
   for (let i = 0; i < 100; i++) {
     const value = r.randomInt(-10, -8)
     expect(value).toBeGreaterThanOrEqual(-10)
@@ -209,7 +209,7 @@ describe('distribution', () => {
         dict[n] = 1
       }
     }
-    expect(Object.keys(dict).length).toBe((2 ** m))
+    expect(Object.keys(dict).length).toBe(2 ** m)
     const values = Object.values(dict)
     const max = Math.max(...values)
     const min = Math.min(...values)
