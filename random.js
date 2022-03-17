@@ -26,13 +26,7 @@ function randomBits (k) {
   }
   // bits / 8 and rounded up
   const numBytes = intDiv(k + 7, 8)
-  const byteArray = randomBytes(numBytes)
-  let x = 0
-  for (const element of byteArray) {
-    x = (x * 256) + element
-  }
-  // trim excess bits
-  return intDiv(x, 2 ** (numBytes * 8 - k))
+  return intDiv(randomBytes(numBytes).reduce((previousValue, currentValue) => previousValue * 256 + currentValue, 0), 2 ** (numBytes * 8 - k))
 }
 
 /**
