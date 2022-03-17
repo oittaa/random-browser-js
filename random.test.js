@@ -11,10 +11,10 @@ if (process.env.NODE_TEST_MINIFIED) {
   r = await import('./random.js')
 }
 
-const arr49 = Array.from(Array(49).keys())
 const arr100 = Array.from(Array(100).keys())
 const arrPets = ['Cat', 'Dog', 'Fish']
-let temp = ''
+const maxInt = Number.MAX_SAFE_INTEGER;
+const minInt = Number.MIN_SAFE_INTEGER;
 
 test('choice(arr100)', () => {
   const value = r.choice(arr100)
@@ -26,10 +26,26 @@ test('choice(arrPets)', () => {
   expect(arrPets).toContain(value)
 })
 
-test.each(arr49)('randomBits(0) -> randomBits(48)', (i) => {
-  const value = r.randomBits(i)
-  expect(value).toBeGreaterThanOrEqual(0)
-  expect(value).toBeLessThan(Math.pow(2, i))
+test('randomBits(2)', () => {
+  const randomInts = [];
+  for (let i = 0; i < 100; i++) {
+    const value = r.randomBits(2)
+    expect(value).toBeGreaterThanOrEqual(0)
+    expect(value).toBeLessThan(4)
+    randomInts.push(value)
+  }
+  expect(randomInts).toContain(0)
+  expect(randomInts).toContain(1)
+  expect(randomInts).toContain(2)
+  expect(randomInts).toContain(3)
+})
+
+test('randomBits(0) -> randomBits(48)', () => {
+  for (let i = 0; i <= 48; i++) {
+    const value = r.randomBits(i)
+    expect(value).toBeGreaterThanOrEqual(0)
+    expect(value).toBeLessThan(2 ** i)
+  }
 })
 
 test('randomBytes(0)', () => {
@@ -47,16 +63,41 @@ test('randomBytes(65536)', () => {
   expect(value.length).toBe(65536)
 })
 
-test('randomInt(5, 10)', () => {
-  const value = r.randomInt(5, 10)
-  expect(value).toBeGreaterThanOrEqual(5)
-  expect(value).toBeLessThan(10)
+test('randomInt(3)', () => {
+  const randomInts = [];
+  for (let i = 0; i < 100; i++) {
+    const value = r.randomInt(3)
+    expect(value).toBeGreaterThanOrEqual(0)
+    expect(value).toBeLessThan(3)
+    randomInts.push(value)
+  }
+  expect(randomInts).toContain(0)
+  expect(randomInts).toContain(1)
+  expect(randomInts).toContain(2)
 })
 
-test('randomInt(-30, -20)', () => {
-  const value = r.randomInt(-30, -20)
-  expect(value).toBeGreaterThanOrEqual(-30)
-  expect(value).toBeLessThan(-20)
+test('randomInt(1, 3)', () => {
+  const randomInts = [];
+  for (let i = 0; i < 100; i++) {
+    const value = r.randomInt(1, 3)
+    expect(value).toBeGreaterThanOrEqual(1)
+    expect(value).toBeLessThan(3)
+    randomInts.push(value)
+  }
+  expect(randomInts).toContain(1)
+  expect(randomInts).toContain(2)
+})
+
+test('randomInt(-10, -8)', () => {
+  const randomInts = [];
+  for (let i = 0; i < 100; i++) {
+    const value = r.randomInt(-10, -8)
+    expect(value).toBeGreaterThanOrEqual(-10)
+    expect(value).toBeLessThan(-8)
+    randomInts.push(value)
+  }
+  expect(randomInts).toContain(-10)
+  expect(randomInts).toContain(-9)
 })
 
 test('randomInt(0xFFFF_FFFF_FFFF)', () => {
@@ -65,21 +106,28 @@ test('randomInt(0xFFFF_FFFF_FFFF)', () => {
   expect(value).toBeLessThan(0xFFFF_FFFF_FFFF)
 })
 
-test.each(arr100)('randomInt(1) -> randomInt(100)', (i) => {
-  const value = r.randomInt(i + 1)
-  expect(value).toBeGreaterThanOrEqual(0)
-  expect(value).toBeLessThan(i + 1)
+test('randomInt(1) -> randomInt(1000)', () => {
+  for (let i = 1; i <= 1000; i++) {
+    const value = r.randomInt(i)
+    expect(value).toBeGreaterThanOrEqual(0)
+    expect(value).toBeLessThan(i)
+  }
 })
 
-test.each(arr100)('tokenHex() collision', (i) => {
-  const value = r.tokenHex()
-  expect(value).not.toBe(temp)
-  temp = value
+test('tokenHex() collision', () => {
+  let temp = ''
+  for (let i = 0; i < 100; i++) {
+    const value = r.tokenHex()
+    expect(value).not.toBe(temp)
+    temp = value
+  }
 })
 
-test.each(arr100)('tokenHex() length', (i) => {
-  const value = r.tokenHex(i)
-  expect(value.length).toBe(i * 2)
+test('tokenHex() length', () => {
+  for (let i = 0; i < 100; i++) {
+    const value = r.tokenHex(i)
+    expect(value.length).toBe(i * 2)
+  }
 })
 
 describe('errors', () => {
@@ -99,13 +147,17 @@ describe('errors', () => {
     expect(() => r.randomBytes(-1)).toThrow(RangeError)
   })
 
+  test('randomInt(1, 1)', () => {
+    expect(() => r.randomInt(1, 1)).toThrow(RangeError)
+  })
+
   test('randomInt(-1, 0xFFFF_FFFF_FFFF)', () => {
     expect(() => r.randomInt(-1, 0xFFFF_FFFF_FFFF)).toThrow(RangeError)
   })
 
   test('randomInt() without safe integer', () => {
-    expect(() => r.randomInt(Number.MAX_SAFE_INTEGER + 1)).toThrow(Error)
-    expect(() => r.randomInt(Number.MIN_SAFE_INTEGER - 1, Number.MIN_SAFE_INTEGER)).toThrow(Error)
+    expect(() => r.randomInt(maxInt, maxInt + 1)).toThrow(Error)
+    expect(() => r.randomInt(minInt - 1, minInt)).toThrow(Error)
   })
 })
 
@@ -157,7 +209,7 @@ describe('distribution', () => {
         dict[n] = 1
       }
     }
-    expect(Object.keys(dict).length).toBe(Math.pow(2, m))
+    expect(Object.keys(dict).length).toBe((2 ** m))
     const values = Object.values(dict)
     const max = Math.max(...values)
     const min = Math.min(...values)
@@ -172,6 +224,6 @@ describe('distribution', () => {
       avg += r.randomBits(48)
     }
     avg /= rounds
-    expect(avg / expected).toBeCloseTo(1.0)
+    expect(avg / expected).toBeCloseTo(1.0, 1)
   })
 })
