@@ -29,7 +29,7 @@ console.log('32 character hexadecimal string from 16 random bytes: ' + tokenHex(
 
 Use a CDN like JSDelivr:
 ```
-https://cdn.jsdelivr.net/npm/random-browser@1.0.5
+https://cdn.jsdelivr.net/npm/random-browser@1.0.6
 or
 https://cdn.jsdelivr.net/npm/random-browser
 ```
