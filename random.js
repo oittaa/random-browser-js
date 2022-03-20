@@ -60,22 +60,17 @@ function randomInt (min, max) {
   if (max <= min) {
     throw new RangeError('"max" must be greater than "min".')
   }
-  const range = max - min
-  if (!(range <= RAND_MAX)) {
+  const range = max - min - 1
+  if (range >= RAND_MAX) {
     throw new RangeError('"max - min" must be less than or equal to ' + RAND_MAX)
   }
-  if (range === 1) {
+  if (range === 0) {
     return min
-  }
-  // number of bits necessary to represent an unsigned integer (range) in binary
-  let k = 1
-  for (let i = 2; i < range; i *= 2) {
-    k++
   }
   let x
   do {
-    x = randomBits(k)
-  } while (x >= range)
+    x = randomBits(range.toString(2).length)
+  } while (x > range)
   return x + min
 }
 
