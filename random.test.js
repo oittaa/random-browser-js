@@ -106,6 +106,18 @@ test('randomInt(0xFFFF_FFFF_FFFF)', () => {
   expect(value).toBeLessThan(0xFFFF_FFFF_FFFF)
 })
 
+test('randomInt(minInt, minInt + 5)', () => {
+  const value = r.randomInt(minInt, minInt + 5)
+  expect(value).toBeGreaterThanOrEqual(minInt)
+  expect(value).toBeLessThan(minInt + 5)
+})
+
+test('randomInt(maxInt - 5, maxInt)', () => {
+  const value = r.randomInt(maxInt - 5, maxInt)
+  expect(value).toBeGreaterThanOrEqual(maxInt - 5)
+  expect(value).toBeLessThan(maxInt)
+})
+
 test('randomInt(1) -> randomInt(1000)', () => {
   for (let i = 1; i <= 1000; i++) {
     const value = r.randomInt(i)
@@ -118,6 +130,7 @@ test('tokenHex() collision', () => {
   let temp = ''
   for (let i = 0; i < 100; i++) {
     const value = r.tokenHex()
+    expect(value.length).toBe(64)
     expect(value).not.toBe(temp)
     temp = value
   }
@@ -131,8 +144,12 @@ test('tokenHex() length', () => {
 })
 
 describe('errors', () => {
-  test('choice([])', () => {
+  test.each([{}, []])('choice(%s)', (i) => {
     expect(() => r.choice([])).toThrow(RangeError)
+  })
+
+  test.each([false, true, NaN, null, {}, undefined])('choice(%s)', (i) => {
+    expect(() => r.choice(i)).toThrow(TypeError)
   })
 
   test('randomBits(-1)', () => {
@@ -143,27 +160,40 @@ describe('errors', () => {
     expect(() => r.randomBits(49)).toThrow(RangeError)
   })
 
+  test.each(['10', false, true, NaN, null, {}, [], undefined])('randomBits(%s)', (i) => {
+    expect(() => r.randomBits(i)).toThrow(new TypeError('The "k" argument must be of type number.'))
+  })
+
   test('randomBytes(-1)', () => {
     expect(() => r.randomBytes(-1)).toThrow(RangeError)
   })
 
-  test('randomInt(1, 1)', () => {
-    expect(() => r.randomInt(1, 1)).toThrow(RangeError)
+  test.each(['10', false, true, NaN, null, {}, [], undefined])('randomBytes(%s)', (i) => {
+    expect(() => r.randomBytes(i)).toThrow(new TypeError('The "size" argument must be of type number.'))
   })
 
-  test('randomInt(-1, 0xFFFF_FFFF_FFFF)', () => {
-    expect(() => r.randomInt(-1, 0xFFFF_FFFF_FFFF)).toThrow(RangeError)
+  test.each([[0, 0], [1, 1], [3, 2], [-5, -5], [11, -10], [-1, 0xFFFF_FFFF_FFFF]])('randomInt(%i, %i)', (min, max) => {
+    expect(() => r.randomInt(min, max)).toThrow(RangeError)
   })
 
-  test('randomInt() without safe integer', () => {
-    expect(() => r.randomInt(maxInt, maxInt + 1)).toThrow(Error)
-    expect(() => r.randomInt(minInt - 1, minInt)).toThrow(Error)
+  test.each([[maxInt, maxInt + 1, '"max" is not a safe integer.'], [minInt - 1, minInt, '"min" is not a safe integer.']])('randomInt(%i, %i) -> %s', (min, max, err) => {
+    expect(() => r.randomInt(min, max)).toThrow(new TypeError(err))
+  })
+
+  test.each(['10', false, true, NaN, null, {}, []])('randomInt(%s)', (i) => {
+    expect(() => r.randomInt(i, 100)).toThrow(new TypeError('"min" is not a safe integer.'))
+    expect(() => r.randomInt(i)).toThrow(new TypeError('"max" is not a safe integer.'))
+    expect(() => r.randomInt(0, i)).toThrow(new TypeError('"max" is not a safe integer.'))
+  })
+
+  test.each(['10', false, true, NaN, null, {}, []])('tokenHex(%s)', (i) => {
+    expect(() => r.tokenHex(i)).toThrow(new TypeError('The "size" argument must be of type number.'))
   })
 })
 
 // Doesn't guarantee correctness, but at least the numbers are appearing in the full range.
 describe('distribution', () => {
-  test.each([1, 8, 65536])('randomBytes()', (m) => {
+  test.each([1, 8, 65536])('randomBytes(%i)', (m) => {
     const dict = {}
     for (let i = 0; i < 1_000_000 / m; i++) {
       const bytes = r.randomBytes(m)
@@ -182,7 +212,7 @@ describe('distribution', () => {
     expect(min / max).toBeGreaterThan(0.8)
   })
 
-  test.each([2, 14, 15, 16, 17, 254, 255, 256, 257])('randomInt()', (m) => {
+  test.each([2, 14, 15, 16, 17, 254, 255, 256, 257])('randomInt(%i)', (m) => {
     const dict = {}
     for (let i = 0; i < 100_000; i++) {
       const n = r.randomInt(m)
@@ -199,7 +229,7 @@ describe('distribution', () => {
     expect(min / max).toBeGreaterThan(0.5)
   })
 
-  test.each([1, 2, 3, 4, 5, 6, 7, 8, 9])('randomBits()', (m) => {
+  test.each([1, 2, 3, 4, 5, 6, 7, 8, 9])('randomBits(%i)', (m) => {
     const dict = {}
     for (let i = 0; i < 100_000; i++) {
       const n = r.randomBits(m)

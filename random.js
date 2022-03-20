@@ -18,6 +18,9 @@ const choice = arr => arr[randomInt(arr.length)]
  * Return an int with k random bits.
  */
 function randomBits (k) {
+  if (!Number.isInteger(k)) {
+    throw new TypeError('The "k" argument must be of type number.')
+  }
   if (k < 0) {
     throw new RangeError('number of bits must be non-negative.')
   }
@@ -33,7 +36,12 @@ function randomBits (k) {
  * Generates cryptographically strong pseudorandom data. The size argument
  * is a number indicating the number of bytes to generate.
  */
-const randomBytes = size => window.crypto.getRandomValues(new Uint8Array(size))
+function randomBytes (size) {
+  if (Number.isInteger(size)) {
+    return window.crypto.getRandomValues(new Uint8Array(size))
+  }
+  throw new TypeError('The "size" argument must be of type number.')
+}
 
 /**
 * Return a random integer n such that min <= n < max.
@@ -44,10 +52,10 @@ function randomInt (min, max) {
     min = 0
   }
   if (!Number.isSafeInteger(min)) {
-    throw new Error('"min" is not a safe integer.')
+    throw new TypeError('"min" is not a safe integer.')
   }
   if (!Number.isSafeInteger(max)) {
-    throw new Error('"max" is not a safe integer.')
+    throw new TypeError('"max" is not a safe integer.')
   }
   if (max <= min) {
     throw new RangeError('"max" must be greater than "min".')
