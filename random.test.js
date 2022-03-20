@@ -144,7 +144,7 @@ test('tokenHex() length', () => {
 })
 
 describe('errors', () => {
-  test.each([{}, []])('choice(%s)', (i) => {
+  test('choice([])', () => {
     expect(() => r.choice([])).toThrow(RangeError)
   })
 
