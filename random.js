@@ -19,17 +19,19 @@ const choice = arr => arr[randomInt(arr.length)]
  */
 function randomBits (k) {
   if (!Number.isInteger(k)) {
-    throw new TypeError('The "k" argument must be of type number.')
+    throw new TypeError('"k" must be an integer.')
   }
   if (k < 0) {
-    throw new RangeError('number of bits must be non-negative.')
+    throw new RangeError('"k" must be non-negative.')
   }
   if (k > BITS_MAX) {
-    throw new RangeError('number of bits must be less than or equal to ' + BITS_MAX)
+    throw new RangeError('"k" must be less than or equal to ' + BITS_MAX)
   }
   // bits / 8 and rounded up
   const numBytes = intDiv(k + 7, 8)
-  return intDiv(randomBytes(numBytes).reduce((previousValue, currentValue) => previousValue * 256 + currentValue, 0), 2 ** (numBytes * 8 - k))
+  return intDiv(
+    randomBytes(numBytes).reduce((acc, cur) => acc * 256 + cur, 0),
+    2 ** (numBytes * 8 - k))
 }
 
 /**
@@ -40,7 +42,7 @@ function randomBytes (size) {
   if (Number.isInteger(size)) {
     return window.crypto.getRandomValues(new Uint8Array(size))
   }
-  throw new TypeError('The "size" argument must be of type number.')
+  throw new TypeError('The argument must be an integer.')
 }
 
 /**
@@ -79,6 +81,16 @@ function randomInt (min, max) {
  * bytes, each byte converted to two hex digits. If numBytes is not supplied,
  * a reasonable default is used.
  */
-const tokenHex = (numBytes = DEFAULT_ENTROPY) => Array.from(randomBytes(numBytes), byte => ('0' + byte.toString(16)).slice(-2)).join('')
+const tokenHex = (numBytes = DEFAULT_ENTROPY) =>
+  Array.from(randomBytes(numBytes), byte => ('0' + byte.toString(16)).slice(-2)).join('')
 
-export { choice, randomBits, randomBytes, randomInt, tokenHex }
+/**
+ * Return a random URL-safe text string, containing numBytes random bytes. The
+ * text is Base64 encoded, so on average each byte results in approximately
+ * 1.3 characters. If numBytes is not supplied, a reasonable default is used.
+ */
+const tokenUrlsafe = (numBytes = DEFAULT_ENTROPY) =>
+  window.btoa(String.fromCharCode(...randomBytes(numBytes)))
+    .replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_')
+
+export { choice, randomBits, randomBytes, randomInt, tokenHex, tokenUrlsafe }

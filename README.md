@@ -22,6 +22,7 @@ console.log('3 random bytes e.g. [218, 82, 127]: ' + randomBytes(3));
 console.log('Random number chosen from (0, 1, 2): ' + randomInt(3));
 console.log('The dice rolled: ' + randomInt(1, 7));
 console.log('32 character hexadecimal string from 16 random bytes: ' + tokenHex(16));
+console.log('URL-safe Base64 text string from 32 random bytes: ' + tokenUrlsafe());
 </script>
 ```
 
@@ -29,7 +30,7 @@ console.log('32 character hexadecimal string from 16 random bytes: ' + tokenHex(
 
 Use a CDN like JSDelivr:
 ```
-https://cdn.jsdelivr.net/npm/random-browser@1.0.6
+https://cdn.jsdelivr.net/npm/random-browser@1.0.7
 or
 https://cdn.jsdelivr.net/npm/random-browser
 ```
@@ -95,6 +96,16 @@ Return a random text string, in hexadecimal. The string has `numBytes` random by
 ```javascript
 tokenHex();
 tokenHex(16);
+```
+
+### tokenUrlsafe([numBytes])
+* `numBytes` `<integer>` The number of bytes to generate. Default: `32`.
+* Returns: `<string>`
+
+Return a random URL-safe text string, containing `numBytes` random bytes. The text is Base64 encoded, so on average each byte results in approximately 1.3 characters. If `numBytes` is not supplied, a reasonable default is used.
+```javascript
+tokenUrlsafe();
+tokenUrlsafe(16);
 ```
 
 [nodejs-crypto]: https://nodejs.org/api/crypto.html
