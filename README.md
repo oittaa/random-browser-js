@@ -13,7 +13,7 @@ Inspired by [crypto][nodejs-crypto] from Node.js and [secrets][python-secrets] f
 
 ```html
 <script type="module">
-import { choice, randomBits, randomBytes, randomInt, tokenHex } from 'https://cdn.jsdelivr.net/npm/random-browser';
+import { choice, randomBits, randomBytes, randomInt, tokenHex, tokenUrlsafe } from 'https://cdn.jsdelivr.net/npm/random-browser';
 
 console.log('Pick a random fruit from array: ' + choice(['Apple', 'Banana', 'Orange']));
 console.log('Pick a random character from string: ' + choice('ABCDEF'));
@@ -30,7 +30,7 @@ console.log('URL-safe Base64 text string from 32 random bytes: ' + tokenUrlsafe(
 
 Use a CDN like JSDelivr:
 ```
-https://cdn.jsdelivr.net/npm/random-browser@1.0.7
+https://cdn.jsdelivr.net/npm/random-browser@1.0.8
 or
 https://cdn.jsdelivr.net/npm/random-browser
 ```
