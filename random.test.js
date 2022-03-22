@@ -131,6 +131,7 @@ test('tokenHex() collision', () => {
   for (let i = 0; i < 100; i++) {
     const value = r.tokenHex()
     expect(value.length).toBe(64)
+    expect(value).toMatch(/^[a-f0-9]+$/)
     expect(value).not.toBe(temp)
     temp = value
   }
@@ -138,9 +139,27 @@ test('tokenHex() collision', () => {
 
 test('tokenHex() length', () => {
   for (let i = 0; i < 100; i++) {
-    const value = r.tokenHex(i)
-    expect(value.length).toBe(i * 2)
+    expect(r.tokenHex(i).length).toBe(i * 2)
   }
+  expect(r.tokenHex(65536).length).toBe(131072)
+})
+
+test('tokenUrlsafe() collision', () => {
+  let temp = ''
+  for (let i = 0; i < 100; i++) {
+    const value = r.tokenUrlsafe()
+    expect(value.length).toBe(43)
+    expect(value).toMatch(/^[A-Za-z0-9\-_]+$/)
+    expect(value).not.toBe(temp)
+    temp = value
+  }
+})
+
+test('tokenUrlsafe() length', () => {
+  for (let i = 0; i < 100; i++) {
+    expect(r.tokenUrlsafe(i).length).toBe(Math.ceil(i * 4 / 3))
+  }
+  expect(r.tokenUrlsafe(65536).length).toBe(87382)
 })
 
 describe('errors', () => {
@@ -148,46 +167,46 @@ describe('errors', () => {
     expect(() => r.choice([])).toThrow(RangeError)
   })
 
-  test.each([false, true, NaN, null, {}, undefined])('choice(%s)', (i) => {
+  test.each([false, true, NaN, null, {}, undefined])('choice(%p)', (i) => {
     expect(() => r.choice(i)).toThrow(TypeError)
   })
 
-  test('randomBits(-1)', () => {
-    expect(() => r.randomBits(-1)).toThrow(RangeError)
+  test.each([-1, 49])('randomBits(%i)', (i) => {
+    expect(() => r.randomBits(i)).toThrow(RangeError)
   })
 
-  test('randomBits(49)', () => {
-    expect(() => r.randomBits(49)).toThrow(RangeError)
-  })
-
-  test.each(['10', false, true, NaN, null, {}, [], undefined])('randomBits(%s)', (i) => {
-    expect(() => r.randomBits(i)).toThrow(new TypeError('The "k" argument must be of type number.'))
+  test.each([2.5, '10', false, true, NaN, null, {}, [], undefined])('randomBits(%p)', (i) => {
+    expect(() => r.randomBits(i)).toThrow(new TypeError('"k" must be an integer.'))
   })
 
   test('randomBytes(-1)', () => {
     expect(() => r.randomBytes(-1)).toThrow(RangeError)
   })
 
-  test.each(['10', false, true, NaN, null, {}, [], undefined])('randomBytes(%s)', (i) => {
-    expect(() => r.randomBytes(i)).toThrow(new TypeError('The "size" argument must be of type number.'))
+  test.each([2.5, '10', false, true, NaN, null, {}, [], undefined])('randomBytes(%p)', (i) => {
+    expect(() => r.randomBytes(i)).toThrow(new TypeError('The argument must be an integer.'))
   })
 
   test.each([[0, 0], [1, 1], [3, 2], [-5, -5], [11, -10], [-1, 0xFFFF_FFFF_FFFF]])('randomInt(%i, %i)', (min, max) => {
     expect(() => r.randomInt(min, max)).toThrow(RangeError)
   })
 
-  test.each([[maxInt, maxInt + 1, '"max" is not a safe integer.'], [minInt - 1, minInt, '"min" is not a safe integer.']])('randomInt(%i, %i) -> %s', (min, max, err) => {
+  test.each([[maxInt, maxInt + 1, '"max" is not a safe integer.'], [minInt - 1, minInt, '"min" is not a safe integer.']])('randomInt(%i, %i) -> %p', (min, max, err) => {
     expect(() => r.randomInt(min, max)).toThrow(new TypeError(err))
   })
 
-  test.each(['10', false, true, NaN, null, {}, []])('randomInt(%s)', (i) => {
+  test.each([2.5, '10', false, true, NaN, null, {}, []])('randomInt(%p)', (i) => {
     expect(() => r.randomInt(i, 100)).toThrow(new TypeError('"min" is not a safe integer.'))
     expect(() => r.randomInt(i)).toThrow(new TypeError('"max" is not a safe integer.'))
     expect(() => r.randomInt(0, i)).toThrow(new TypeError('"max" is not a safe integer.'))
   })
 
-  test.each(['10', false, true, NaN, null, {}, []])('tokenHex(%s)', (i) => {
-    expect(() => r.tokenHex(i)).toThrow(new TypeError('The "size" argument must be of type number.'))
+  test.each([2.5, '10', false, true, NaN, null, {}, []])('tokenHex(%p)', (i) => {
+    expect(() => r.tokenHex(i)).toThrow(new TypeError('The argument must be an integer.'))
+  })
+
+  test.each([2.5, '10', false, true, NaN, null, {}, []])('tokenUrlsafe(%p)', (i) => {
+    expect(() => r.tokenUrlsafe(i)).toThrow(new TypeError('The argument must be an integer.'))
   })
 })
 
@@ -255,5 +274,43 @@ describe('distribution', () => {
     }
     avg /= rounds
     expect(avg / expected).toBeCloseTo(1.0, 1)
+  })
+
+  test('tokenHex()', () => {
+    const dict = {}
+    for (let i = 0; i < 10_000; i++) {
+      const token = r.tokenHex()
+      for (let j = 0; j < token.length; j++) {
+        if (token[j] in dict) {
+          dict[token[j]]++
+        } else {
+          dict[token[j]] = 1
+        }
+      }
+    }
+    expect(Object.keys(dict).length).toBe(16)
+    const values = Object.values(dict)
+    const max = Math.max(...values)
+    const min = Math.min(...values)
+    expect(min / max).toBeGreaterThan(0.9)
+  })
+
+  test('tokenUrlsafe()', () => {
+    const dict = {}
+    for (let i = 0; i < 10_000; i++) {
+      const token = r.tokenUrlsafe()
+      for (let j = 0; j < token.length; j++) {
+        if (token[j] in dict) {
+          dict[token[j]]++
+        } else {
+          dict[token[j]] = 1
+        }
+      }
+    }
+    expect(Object.keys(dict).length).toBe(64)
+    const values = Object.values(dict)
+    const max = Math.max(...values)
+    const min = Math.min(...values)
+    expect(min / max).toBeGreaterThan(0.8)
   })
 })
