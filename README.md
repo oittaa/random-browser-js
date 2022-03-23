@@ -13,7 +13,14 @@ Inspired by [crypto][nodejs-crypto] from Node.js and [secrets][python-secrets] f
 
 ```html
 <script type="module">
-import { choice, randomBits, randomBytes, randomInt, tokenHex, tokenUrlsafe } from 'https://cdn.jsdelivr.net/npm/random-browser';
+import {
+  choice,
+  randomBits,
+  randomBytes,
+  randomInt,
+  tokenHex,
+  tokenUrlsafe
+} from 'https://cdn.jsdelivr.net/npm/random-browser';
 
 console.log('Pick a random fruit from array: ' + choice(['Apple', 'Banana', 'Orange']));
 console.log('Pick a random character from string: ' + choice('ABCDEF'));
