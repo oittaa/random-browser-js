@@ -11,19 +11,32 @@ if (process.env.NODE_TEST_MINIFIED) {
   r = await import('./random.js')
 }
 
-const arr100 = Array.from(Array(100).keys())
-const arrPets = ['Cat', 'Dog', 'Fish']
 const maxInt = Number.MAX_SAFE_INTEGER
 const minInt = Number.MIN_SAFE_INTEGER
 
-test('choice(arr100)', () => {
-  const value = r.choice(arr100)
-  expect(arr100).toContain(value)
+test('choice(arrPets)', () => {
+  const randomChoices = []
+  const arrPets = ['Cat', 'Dog', 'Fish']
+  for (let i = 0; i < 100; i++) {
+    const value = r.choice(arrPets)
+    expect(arrPets).toContain(value)
+    randomChoices.push(value)
+  }
+  expect(randomChoices).toContain('Cat')
+  expect(randomChoices).toContain('Dog')
+  expect(randomChoices).toContain('Fish')
 })
 
-test('choice(arrPets)', () => {
-  const value = r.choice(arrPets)
-  expect(arrPets).toContain(value)
+test('choice("ABC")', () => {
+  const randomChoices = []
+  for (let i = 0; i < 100; i++) {
+    const value = r.choice('ABC')
+    expect('ABC').toContain(value)
+    randomChoices.push(value)
+  }
+  expect(randomChoices).toContain('A')
+  expect(randomChoices).toContain('B')
+  expect(randomChoices).toContain('C')
 })
 
 test('randomBits(2)', () => {
@@ -210,9 +223,9 @@ describe('errors', () => {
   })
 })
 
-// Doesn't guarantee correctness, but at least the numbers are appearing in the full range.
+// Doesn't guarantee correctness, but at least the outputs are appearing in the full range.
 describe('distribution', () => {
-  test.each([1, 8, 65536])('randomBytes(%i)', (m) => {
+  test.each([32, 256, 65536])('randomBytes(%i)', (m) => {
     const dict = {}
     for (let i = 0; i < 1_000_000 / m; i++) {
       const bytes = r.randomBytes(m)
@@ -233,7 +246,7 @@ describe('distribution', () => {
 
   test.each([2, 14, 15, 16, 17, 254, 255, 256, 257])('randomInt(%i)', (m) => {
     const dict = {}
-    for (let i = 0; i < 100_000; i++) {
+    for (let i = 0; i < 300 * m; i++) {
       const n = r.randomInt(m)
       if (n in dict) {
         dict[n]++
@@ -250,7 +263,7 @@ describe('distribution', () => {
 
   test.each([1, 2, 3, 4, 5, 6, 7, 8, 9])('randomBits(%i)', (m) => {
     const dict = {}
-    for (let i = 0; i < 100_000; i++) {
+    for (let i = 0; i < 300 * 2 ** m; i++) {
       const n = r.randomBits(m)
       if (n in dict) {
         dict[n]++
@@ -265,15 +278,15 @@ describe('distribution', () => {
     expect(min / max).toBeGreaterThan(0.5)
   })
 
-  test('randomBits(48) average', () => {
-    const expected = (2 ** 48 - 1) / 2
-    const rounds = 100_000
+  test.each([[32, 1], [48, 1]])('randomBits(%i) average', (k, numDigits) => {
+    const expected = (2 ** k - 1) / 2
+    const rounds = 10_000
     let avg = 0
     for (let i = 0; i < rounds; i++) {
-      avg += r.randomBits(48)
+      avg += r.randomBits(k)
     }
     avg /= rounds
-    expect(avg / expected).toBeCloseTo(1.0, 1)
+    expect(avg / expected).toBeCloseTo(1.0, numDigits)
   })
 
   test('tokenHex()', () => {
