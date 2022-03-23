@@ -176,11 +176,11 @@ test('tokenUrlsafe() length', () => {
 })
 
 describe('errors', () => {
-  test('choice([])', () => {
-    expect(() => r.choice([])).toThrow(RangeError)
+  test.each([[], ''])('choice(%p)', (i) => {
+    expect(() => r.choice(i)).toThrow(RangeError)
   })
 
-  test.each([false, true, NaN, null, {}, undefined])('choice(%p)', (i) => {
+  test.each([2.5, 10, false, true, NaN, null, {}, undefined])('choice(%p)', (i) => {
     expect(() => r.choice(i)).toThrow(TypeError)
   })
 
@@ -200,11 +200,16 @@ describe('errors', () => {
     expect(() => r.randomBytes(i)).toThrow(new TypeError('The argument must be an integer.'))
   })
 
-  test.each([[0, 0], [1, 1], [3, 2], [-5, -5], [11, -10], [-1, 0xFFFF_FFFF_FFFF]])('randomInt(%i, %i)', (min, max) => {
+  test.each([
+    [0, 0], [1, 1], [3, 2], [-5, -5], [11, -10], [-1, 0xFFFF_FFFF_FFFF]
+  ])('randomInt(%i, %i)', (min, max) => {
     expect(() => r.randomInt(min, max)).toThrow(RangeError)
   })
 
-  test.each([[maxInt, maxInt + 1, '"max" is not a safe integer.'], [minInt - 1, minInt, '"min" is not a safe integer.']])('randomInt(%i, %i) -> %p', (min, max, err) => {
+  test.each([
+    [maxInt, maxInt + 1, '"max" is not a safe integer.'],
+    [minInt - 1, minInt, '"min" is not a safe integer.']
+  ])('randomInt(%i, %i) -> %p', (min, max, err) => {
     expect(() => r.randomInt(min, max)).toThrow(new TypeError(err))
   })
 
