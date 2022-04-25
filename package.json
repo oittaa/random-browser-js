@@ -13,7 +13,7 @@
   "author": "oittaa",
   "license": "MIT",
   "devDependencies": {
-    "jest": "^27.5.1",
+    "jest": "^28.0.0",
     "standard": "^17.0.0",
     "terser": "^5.12.0"
   },
