@@ -105,7 +105,7 @@ function uuidv7 () {
   lastUnixts = unixts
   const unixtsStr = unixts.toString(16).padStart(12, '0').slice(-12)
   const rand = randomBytes(10)
-  rand[0] = rand[0] & 0xf | 0x70 // version
+  rand[0] = rand[0] & 0xF | 0x70 // version
   rand[2] = rand[2] & 0x3F | 0x80 // variant
   let result = unixtsStr.slice(0, 8) + '-' + unixtsStr.slice(8) + '-'
   for (let i = 0; i < 10; i++) {
