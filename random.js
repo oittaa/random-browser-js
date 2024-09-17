@@ -3,6 +3,7 @@
 const BITS_MAX = 48
 const DEFAULT_ENTROPY = 32
 const RAND_MAX = 0xFFFF_FFFF_FFFF
+let lastUnixts = 0
 
 /**
  * Return the integer quotient of the division of a by b.
@@ -93,4 +94,27 @@ const tokenUrlsafe = (numBytes = DEFAULT_ENTROPY) =>
   window.btoa(String.fromCharCode(...randomBytes(numBytes)))
     .replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_')
 
-export { choice, randomBits, randomBytes, randomInt, tokenHex, tokenUrlsafe }
+/**
+ * Return a UUID Version 7. https://www.rfc-editor.org/rfc/rfc9562.html
+ */
+function uuidv7 () {
+  let unixts = Date.now()
+  if (lastUnixts >= unixts) {
+    unixts = lastUnixts + 1
+  }
+  lastUnixts = unixts
+  const unixtsStr = unixts.toString(16).padStart(12, '0').slice(-12)
+  const rand = randomBytes(10)
+  rand[0] = rand[0] & 0xf | 0x70 // version
+  rand[2] = rand[2] & 0x3F | 0x80 // variant
+  let result = unixtsStr.slice(0, 8) + '-' + unixtsStr.slice(8) + '-'
+  for (let i = 0; i < 10; i++) {
+    result += ('0' + rand[i].toString(16)).slice(-2)
+    if (i === 1 || i === 3) {
+      result += '-'
+    }
+  }
+  return result
+}
+
+export { choice, randomBits, randomBytes, randomInt, tokenHex, tokenUrlsafe, uuidv7 }
