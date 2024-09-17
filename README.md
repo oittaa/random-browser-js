@@ -120,7 +120,7 @@ tokenUrlsafe(16);
 ### uuidv7()
 * Returns: `<string>`
 
-Return a 8-4-4-4-12 canonical hexadecimal string representation of a [UUID Version 7][uuid-rfc].
+Return a [UUID Version 7][uuid-rfc] in the 8-4-4-4-12 canonical hexadecimal string representation.
 ```javascript
 uuidv7();
 ```
