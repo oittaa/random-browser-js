@@ -26,4 +26,5 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           flags: unittests
+          token: ${{ secrets.CODECOV_TOKEN }}
       - run: NODE_TEST_MINIFIED=1 npm test
