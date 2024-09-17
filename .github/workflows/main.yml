@@ -23,7 +23,7 @@ jobs:
       - run: npm run build --if-present
       - run: npm test
       - name: Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           flags: unittests
       - run: NODE_TEST_MINIFIED=1 npm test
