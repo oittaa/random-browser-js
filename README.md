@@ -19,7 +19,8 @@ import {
   randomBytes,
   randomInt,
   tokenHex,
-  tokenUrlsafe
+  tokenUrlsafe,
+  uuidv7
 } from 'https://cdn.jsdelivr.net/npm/random-browser';
 
 console.log('Pick a random fruit from array: ' + choice(['Apple', 'Banana', 'Orange']));
@@ -30,6 +31,7 @@ console.log('Random number chosen from (0, 1, 2): ' + randomInt(3));
 console.log('The dice rolled: ' + randomInt(1, 7));
 console.log('32 character hexadecimal string from 16 random bytes: ' + tokenHex(16));
 console.log('URL-safe Base64 text string from 32 random bytes: ' + tokenUrlsafe());
+console.log('UUID Version 7: ' + uuidv7());
 </script>
 ```
 
@@ -37,7 +39,7 @@ console.log('URL-safe Base64 text string from 32 random bytes: ' + tokenUrlsafe(
 
 Use a CDN like JSDelivr:
 ```
-https://cdn.jsdelivr.net/npm/random-browser@1.0.8
+https://cdn.jsdelivr.net/npm/random-browser@1.1.0
 or
 https://cdn.jsdelivr.net/npm/random-browser
 ```
@@ -115,6 +117,15 @@ tokenUrlsafe();
 tokenUrlsafe(16);
 ```
 
+### uuidv7()
+* Returns: `<string>`
+
+Return a 8-4-4-4-12 canonical hexadecimal string representation of a [UUID Version 7][uuid-rfc].
+```javascript
+uuidv7();
+```
+
 [nodejs-crypto]: https://nodejs.org/api/crypto.html
 [python-secrets]: https://docs.python.org/3/library/secrets.html
 [random-js-file]: https://github.com/oittaa/random-browser-js/blob/main/random.js
+[uuid-rfc]: https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-version-7

@@ -175,6 +175,12 @@ test('tokenUrlsafe() length', () => {
   expect(r.tokenUrlsafe(65536).length).toBe(87382)
 })
 
+test('uuidv7() format', () => {
+  for (let i = 0; i < 100; i++) {
+    expect(r.uuidv7()).toMatch(/^[a-f0-9]{8}-[a-f0-9]{4}-7[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/)
+  }
+})
+
 describe('errors', () => {
   test.each([[], ''])('choice(%p)', (i) => {
     expect(() => r.choice(i)).toThrow(RangeError)
@@ -330,5 +336,14 @@ describe('distribution', () => {
     const max = Math.max(...values)
     const min = Math.min(...values)
     expect(min / max).toBeGreaterThan(0.8)
+  })
+
+  test('uuidv7()', () => {
+    let prev = r.uuidv7()
+    for (let i = 0; i < 100; i++) {
+      const cur = r.uuidv7()
+      expect(cur > prev).toBeTruthy()
+      prev = cur
+    }
   })
 })
