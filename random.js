@@ -3,6 +3,7 @@
 const BITS_MAX = 48
 const DEFAULT_ENTROPY = 32
 const RAND_MAX = 0xFFFF_FFFF_FFFF
+const hexBytesCache = new Array(256).fill().map((element, index) => index.toString(16).padStart(2, '0'))
 let lastUnixts = 0
 
 /**
@@ -83,7 +84,7 @@ function randomInt (min, max) {
  * a reasonable default is used.
  */
 const tokenHex = (numBytes = DEFAULT_ENTROPY) =>
-  Array.from(randomBytes(numBytes), byte => ('0' + byte.toString(16)).slice(-2)).join('')
+  Array.from(randomBytes(numBytes), byte => hexBytesCache[byte]).join('')
 
 /**
  * Return a random URL-safe text string, containing numBytes random bytes. The
@@ -109,7 +110,7 @@ function uuidv7 () {
   rand[2] = rand[2] & 0x3F | 0x80 // variant
   let result = unixtsStr.slice(0, 8) + '-' + unixtsStr.slice(8) + '-'
   for (let i = 0; i < 10; i++) {
-    result += ('0' + rand[i].toString(16)).slice(-2)
+    result += hexBytesCache[rand[i]]
     if (i === 1 || i === 3) {
       result += '-'
     }
