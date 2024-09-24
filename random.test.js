@@ -175,9 +175,13 @@ test('tokenUrlsafe() length', () => {
   expect(r.tokenUrlsafe(65536).length).toBe(87382)
 })
 
-test('uuidv7() format', () => {
+test('uuidv7() format and order', () => {
+  let temp = ''
   for (let i = 0; i < 100; i++) {
-    expect(r.uuidv7()).toMatch(/^[a-f0-9]{8}-[a-f0-9]{4}-7[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/)
+    const value = r.uuidv7()
+    expect(value).toMatch(/^[a-f0-9]{8}-[a-f0-9]{4}-7[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/)
+    expect(value > temp).toBeTruthy()
+    temp = value
   }
 })
 
@@ -338,12 +342,22 @@ describe('distribution', () => {
     expect(min / max).toBeGreaterThan(0.8)
   })
 
-  test('uuidv7()', () => {
-    let prev = r.uuidv7()
-    for (let i = 0; i < 100; i++) {
-      const cur = r.uuidv7()
-      expect(cur > prev).toBeTruthy()
-      prev = cur
+  test('uuidv7() last random bytes', () => {
+    const dict = {}
+    for (let i = 0; i < 10_000; i++) {
+      const token = r.uuidv7()
+      for (let j = 20; j < token.length; j++) {
+        if (token[j] in dict) {
+          dict[token[j]]++
+        } else if (token[j] !== '-') {
+          dict[token[j]] = 1
+        }
+      }
     }
+    expect(Object.keys(dict).length).toBe(16)
+    const values = Object.values(dict)
+    const max = Math.max(...values)
+    const min = Math.min(...values)
+    expect(min / max).toBeGreaterThan(0.9)
   })
 })
