@@ -158,10 +158,27 @@ test('shuffle([1, 2])', () => {
     r.shuffle(arr)
     expect(arr).toContain(1)
     expect(arr).toContain(2)
+    expect(arr.length).toBe(2)
     firstElements.push(arr[0])
   }
   expect(firstElements).toContain(1)
   expect(firstElements).toContain(2)
+})
+
+test('shuffle() includes all elements', () => {
+  const origList = []
+  const shufList = []
+  for (let i = 0; i < 1000; i++) {
+    origList.push(i)
+    shufList.push(i)
+  }
+  r.shuffle(shufList)
+  expect(shufList.length).toBe(origList.length)
+  expect(shufList).not.toEqual(origList)
+  expect(new Set(shufList)).toEqual(new Set(origList))
+  r.shuffle(origList)
+  expect(shufList).not.toEqual(origList)
+  expect(new Set(shufList)).toEqual(new Set(origList))
 })
 
 test('tokenHex() collision', () => {
