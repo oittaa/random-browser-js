@@ -18,17 +18,21 @@ import {
   randomBits,
   randomBytes,
   randomInt,
+  shuffle,
   tokenHex,
   tokenUrlsafe,
   uuidv7
 } from 'https://cdn.jsdelivr.net/npm/random-browser';
 
-console.log('Pick a random fruit from array: ' + choice(['Apple', 'Banana', 'Orange']));
+const arr = ['Apple', 'Banana', 'Orange'];
+console.log('Pick a random fruit from array: ' + choice(arr));
 console.log('Pick a random character from string: ' + choice('ABCDEF'));
 console.log('Random integer with 4 random bits (<16): ' + randomBits(4));
 console.log('3 random bytes e.g. [218, 82, 127]: ' + randomBytes(3));
 console.log('Random number chosen from (0, 1, 2): ' + randomInt(3));
 console.log('The dice rolled: ' + randomInt(1, 7));
+shuffle(arr);
+console.log('Shuffled array: ' + arr);
 console.log('32 character hexadecimal string from 16 random bytes: ' + tokenHex(16));
 console.log('URL-safe Base64 text string from 32 random bytes: ' + tokenUrlsafe());
 console.log('UUID Version 7: ' + uuidv7());
@@ -39,7 +43,7 @@ console.log('UUID Version 7: ' + uuidv7());
 
 Use a CDN like JSDelivr:
 ```
-https://cdn.jsdelivr.net/npm/random-browser@1.1.0
+https://cdn.jsdelivr.net/npm/random-browser@1.2.0
 or
 https://cdn.jsdelivr.net/npm/random-browser
 ```
@@ -95,6 +99,17 @@ Return a random integer `n` such that `min <= n < max`. The range (`max - min`) 
 ```javascript
 randomInt(3);
 randomInt(1, 7);
+```
+
+### shuffle(arr)
+* `arr` `<Array>` The array containing the values.
+* Returns `<undefined>`
+
+Shuffle the array `arr` in place.
+```javascript
+const arr = ['Apple', 'Banana', 'Orange'];
+shuffle(arr);
+console.log(arr);
 ```
 
 ### tokenHex([numBytes])

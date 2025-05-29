@@ -139,6 +139,48 @@ test('randomInt(1) -> randomInt(1000)', () => {
   }
 })
 
+test('shuffle([])', () => {
+  const arr = []
+  r.shuffle(arr)
+  expect(arr).toEqual([])
+})
+
+test('shuffle([1])', () => {
+  const arr = [1]
+  r.shuffle(arr)
+  expect(arr).toEqual([1])
+})
+
+test('shuffle([1, 2])', () => {
+  const firstElements = []
+  for (let i = 0; i < 100; i++) {
+    const arr = [1, 2]
+    r.shuffle(arr)
+    expect(arr).toContain(1)
+    expect(arr).toContain(2)
+    expect(arr.length).toBe(2)
+    firstElements.push(arr[0])
+  }
+  expect(firstElements).toContain(1)
+  expect(firstElements).toContain(2)
+})
+
+test('shuffle() includes all elements', () => {
+  const origList = []
+  const shufList = []
+  for (let i = 0; i < 1000; i++) {
+    origList.push(i)
+    shufList.push(i)
+  }
+  r.shuffle(shufList)
+  expect(shufList.length).toBe(origList.length)
+  expect(shufList).not.toEqual(origList)
+  expect(new Set(shufList)).toEqual(new Set(origList))
+  r.shuffle(origList)
+  expect(shufList).not.toEqual(origList)
+  expect(new Set(shufList)).toEqual(new Set(origList))
+})
+
 test('tokenHex() collision', () => {
   let temp = ''
   for (let i = 0; i < 100; i++) {
@@ -229,6 +271,10 @@ describe('errors', () => {
     expect(() => r.randomInt(0, i)).toThrow(new TypeError('"max" is not a safe integer.'))
   })
 
+  test.each([2.5, 10, '10', false, true, NaN, null, {}])('shuffle(%p)', (i) => {
+    expect(() => r.shuffle(i)).toThrow(new TypeError('The argument must be an array.'))
+  })
+
   test.each([2.5, '10', false, true, NaN, null, {}, []])('tokenHex(%p)', (i) => {
     expect(() => r.tokenHex(i)).toThrow(new TypeError('The argument must be an integer.'))
   })
@@ -302,6 +348,27 @@ describe('distribution', () => {
     }
     avg /= rounds
     expect(avg / expected).toBeCloseTo(1.0, numDigits)
+  })
+
+  test('shuffle([1, 2, 4, 8])', () => {
+    const dict = {}
+    for (let i = 0; i < 10_000; i++) {
+      const arr = [1, 2, 4, 8]
+      r.shuffle(arr)
+      for (let j = 0; j < arr.length; j++) {
+        const idx = arr[j] << (j * arr.length)
+        if (idx in dict) {
+          dict[idx]++
+        } else {
+          dict[idx] = 1
+        }
+      }
+    }
+    expect(Object.keys(dict).length).toBe(16)
+    const values = Object.values(dict)
+    const max = Math.max(...values)
+    const min = Math.min(...values)
+    expect(min / max).toBeGreaterThan(0.9)
   })
 
   test('tokenHex()', () => {

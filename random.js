@@ -79,6 +79,21 @@ function randomInt (min, max) {
 }
 
 /**
+ * Shuffle the array in place (Fisher-Yates shuffle)
+ */
+
+function shuffle (arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('The argument must be an array.')
+  }
+  if (arr.length > 1) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = randomInt(i + 1);
+      [arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+  }
+}
+/**
  * Return a random text string, in hexadecimal. The string has numBytes random
  * bytes, each byte converted to two hex digits. If numBytes is not supplied,
  * a reasonable default is used.
@@ -118,4 +133,4 @@ function uuidv7 () {
   return result
 }
 
-export { choice, randomBits, randomBytes, randomInt, tokenHex, tokenUrlsafe, uuidv7 }
+export { choice, randomBits, randomBytes, randomInt, shuffle, tokenHex, tokenUrlsafe, uuidv7 }
