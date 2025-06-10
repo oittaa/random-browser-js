@@ -13,7 +13,7 @@
   "author": "oittaa",
   "license": "MIT",
   "devDependencies": {
-    "jest": "^29.0.0",
+    "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
     "standard": "^17.0.0",
     "terser": "^5.12.0"
